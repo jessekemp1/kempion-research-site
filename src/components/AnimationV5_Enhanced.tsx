@@ -98,7 +98,6 @@ const EnhancedParticles = ({ scrollVelocity, shockwave }: {
     // --- 2. Simulation State ---
     const state = useRef({
         velocities: new Float32Array(PARTICLE_COUNT * 3),
-        speeds: new Float32Array(PARTICLE_COUNT), // For velocity-based effects
         mixFactor: 0, // 0 = Cloud, 1 = Sphere, 2 = Cube
         targetMix: 0,
         currentShockwave: { x: 0, y: 0, strength: 0 },
@@ -106,41 +105,56 @@ const EnhancedParticles = ({ scrollVelocity, shockwave }: {
 
     // --- 3. Animation Cycle: Cloud → Sphere → Cube → Cloud ---
     useEffect(() => {
-        let timeout: ReturnType<typeof setTimeout>;
+        const timeouts: ReturnType<typeof setTimeout>[] = [];
+        let isMounted = true;
 
         const loop = () => {
+            if (!isMounted) return;
+            
             const s = state.current;
+            let timeout: ReturnType<typeof setTimeout>;
 
             if (s.targetMix === 0) {
                 // At Cloud → Go to Sphere
                 timeout = setTimeout(() => {
-                    s.targetMix = 1;
-                    loop();
+                    if (isMounted) {
+                        s.targetMix = 1;
+                        loop();
+                    }
                 }, 3000);
             } else if (s.targetMix === 1) {
                 // At Sphere → Go to Cube
                 timeout = setTimeout(() => {
-                    s.targetMix = 2;
-                    loop();
+                    if (isMounted) {
+                        s.targetMix = 2;
+                        loop();
+                    }
                 }, 6000);
             } else {
                 // At Cube → Go to Cloud
                 timeout = setTimeout(() => {
-                    s.targetMix = 0;
-                    loop();
+                    if (isMounted) {
+                        s.targetMix = 0;
+                        loop();
+                    }
                 }, 8000);
             }
+
+            timeouts.push(timeout);
         };
 
         loop();
-        return () => clearTimeout(timeout);
+
+        return () => {
+            isMounted = false;
+            timeouts.forEach(timeout => clearTimeout(timeout));
+        };
     }, []);
 
     // --- 4. Update shockwave from parent ---
     useEffect(() => {
-        if (shockwave.strength > 0) {
-            state.current.currentShockwave = { ...shockwave };
-        }
+        // Always sync shockwave state, even when strength is 0
+        state.current.currentShockwave = { ...shockwave };
     }, [shockwave]);
 
     // --- 5. Physics Loop ---
@@ -242,8 +256,6 @@ const EnhancedParticles = ({ scrollVelocity, shockwave }: {
             positions[iy] += vels[iy];
             positions[iz] += vels[iz];
 
-            // Track speed for velocity-based effects
-            s.speeds[i] = Math.sqrt(vels[ix]**2 + vels[iy]**2 + vels[iz]**2);
         }
 
         // Decay shockwave
@@ -271,6 +283,13 @@ const EnhancedParticles = ({ scrollVelocity, shockwave }: {
             blending: THREE.AdditiveBlending,
         });
     }, []);
+
+    // Cleanup material on unmount
+    useEffect(() => {
+        return () => {
+            material.dispose();
+        };
+    }, [material]);
 
     return (
         <points ref={pointsRef}>
