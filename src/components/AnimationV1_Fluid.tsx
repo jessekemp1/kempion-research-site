@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export const FluidBackground = () => {
+export const AnimationV1_Fluid = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {

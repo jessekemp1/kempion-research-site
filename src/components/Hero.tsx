@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion';
-import { FluidBackground } from './FluidBackground';
+
 
 export const Hero = () => {
     return (
-        <section className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-background">
-            <FluidBackground />
-
+        <section className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-transparent">
             {/* Background Ambient Glow - Reduced intensity for subtlety alongside canvas */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[150px] opacity-30 animate-pulse-slow pointer-events-none" />
 
@@ -22,9 +20,30 @@ export const Hero = () => {
                     <div className="absolute inset-0 bg-accent/5 blur-2xl rounded-full scale-150 opacity-40" />
 
                     {/* Main Logo Text - Sharper, bolder */}
-                    <h1 className="text-5xl md:text-8xl font-display font-bold tracking-[0.1em] text-white select-none drop-shadow-[0_0_25px_rgba(255,255,255,0.15)] relative z-10 mix-blend-overlay">
-                        KEMPION
-                    </h1>
+                    <div className="flex justify-center gap-[0.2em]">
+                        {['K', 'E', 'M', 'P', 'I', 'O', 'N'].map((letter, i) => (
+                            <motion.span
+                                key={i}
+                                initial={{ textShadow: "0 0 0px rgba(0, 170, 255, 0)" }}
+                                animate={{
+                                    textShadow: [
+                                        "0 0 10px rgba(0, 170, 255, 0.2)",
+                                        "0 0 20px rgba(0, 170, 255, 0.6)",
+                                        "0 0 10px rgba(0, 170, 255, 0.2)"
+                                    ]
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                    delay: i * 0.2 // Staggered effect
+                                }}
+                                className="text-5xl md:text-8xl font-display font-bold text-white select-none relative z-10 mix-blend-overlay"
+                            >
+                                {letter}
+                            </motion.span>
+                        ))}
+                    </div>
 
                     {/* Subtitle - Wider tracking, improved hierarchy */}
                     <h2 className="text-sm md:text-xl font-sans font-light tracking-[0.8em] text-gray-400 mt-6 uppercase pl-2 flex items-center justify-center gap-4">
