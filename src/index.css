@@ -14,6 +14,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Kempion: subtle particle "breach" animation */
+@keyframes kempionBreach {
+  0% {
+    transform: translateY(-24px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  75% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(240px);
+    opacity: 0;
+  }
+}
+
+.kempion-breach-particle {
+  position: absolute;
+  top: 0;
+  border-radius: 9999px;
+  background: rgba(6, 182, 212, 0.35);
+  filter: blur(0.4px);
+  animation-name: kempionBreach;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

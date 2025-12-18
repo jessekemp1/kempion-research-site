@@ -60,8 +60,8 @@ export const Hero = () => {
                     transition={{ delay: 1.2, duration: 1 }}
                     className="mt-12 text-sm md:text-base font-sans text-gray-500 max-w-md tracking-wide leading-relaxed"
                 >
-                    OPERATIONALIZING INTELLIGENCE FOR<br />
-                    <span className="text-white font-medium">STRATEGIC LEVERAGE</span>
+                    ADVANCING<br />
+                    <span className="text-white font-medium">DECISION INTELLIGENCE</span>
                 </motion.p>
             </div>
 

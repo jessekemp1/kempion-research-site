@@ -11,74 +11,57 @@ This document contains refined content snippets extracted from the Kempion Resea
 **KEMPION RESEARCH**
 
 ### Subheadline
-**OPERATIONALIZING INTELLIGENCE FOR STRATEGIC LEVERAGE**
+**DECISION INTELLIGENCE RESEARCH**
 
 ### Tagline (Alternative)
-**The future belongs to those who successfully operationalize intelligence.**
+**Make Better Decisions Under Uncertainty.**
+
+### Supporting Line (Optional)
+**Calibrated decision intelligence with memory, scenario bands, and learning.**
 
 ---
 
 ## Our Thesis Section
 
-### Current Thesis (To Replace)
-*"The future belongs to those who successfully operationalize intelligence."*
+### Primary Thesis (Public)
+**Make Better Decisions Under Uncertainty.**
 
-### Refined Thesis (Option 1 - Direct)
-**The future belongs to those who successfully operationalize intelligence.**
+Calibrated decision intelligence with memory, scenario bands, and learning. We build systems that carry forward the right context, represent uncertainty explicitly, and improve through feedback loops.
 
-We are building the infrastructure for the next era of work. By moving beyond simple chat interfaces to deep, system-integrated agents, we enable humans to shift from task-execution to strategic direction—unlocking exponential productivity and value.
-
-### Refined Thesis (Option 2 - Metaphysical)
-**Complexity is a failure of intelligence.**
-
-True intelligence is not processing speed; it is **permeability**—the efficiency with which separated units facilitate their own re-integration with the Whole. We research how to dissolve the gap between human intention and machine execution.
-
-### Refined Thesis (Option 3 - Strategic)
+### Alternative Thesis (Short)
 **From Hoping to Knowing.**
-
-We transform uncertainty into calibrated predictions. We make the invisible visible. We turn "hoping" into "knowing" through probabilistic forecasting, scenario bands, and strategic intelligence.
 
 ---
 
 ## Three Pillars Section
 
-### Deep Context (Refined)
+### Memory
 
-**Deep Context**
+**Memory**
 
-Intelligence is useless without memory. Our systems are designed to ingest, understand, and recall the full context of your codebase, business logic, and life domains. We implement 3-tier context architectures (Identity Core, Active Context, RAG Retrieval) that enable true personal intelligence—not generic AI, but systems that remember who you are, what you're doing, and what you know.
+Decisions fail when context resets. We build durable, structured memory—goals, constraints, history, and domain knowledge—so decisions are made with continuity, not amnesia.
 
-**Technical Foundation**: Personal AI Dataset with 911 documents indexed, 519 excellent/good documents searchable, implementing Anthropic's 2025 best practices for context engineering.
+### Scenario Bands
 
-### Reliable Agency (Refined)
+**Scenario Bands**
 
-**Reliable Agency**
+We don't ship single-point answers as "truth." We provide optimistic/likely/conservative ranges, with the conditions and risks that would move the forecast.
 
-Trust is the currency of automation. We research architectures that ensure AI agents act with precision, verify their own work, and fail safely. Our systems provide scenario bands (optimistic, likely, conservative) with explicit conditions—not guesses, but structured forecasts. Every recommendation includes confidence scoring and cross-domain impact analysis.
+### Learning
 
-**Technical Foundation**: VortexV2 probabilistic forecasting (MAE: 8.5kt), Alpha Arena multi-model ensemble, Cortex strategic orchestration with forecast ranges.
+**Learning**
 
-### Human Leverage (Refined)
-
-**Human Leverage**
-
-We don't replace humans; we scale them. Our goal is to provide every individual with the output capacity of an entire organization. Not through working harder, but through **seeing clearer**. We shift humans from task-execution to strategic direction, unlocking exponential productivity and value.
-
-**Technical Foundation**: Cortex Life Weather Map, Routes & Waypoints system, Virtual Twin simulation (in development), Strategic Sovereignty framework.
+We measure prediction vs. outcome, then improve. Calibration loops turn decisions into an engineering discipline: predict, act, observe, adjust.
 
 ---
 
 ## Research Focus Areas
 
-### Area 1: The Mirror Thesis
+### Area 1: Calibration and Reliability
 
-**The Mirror Thesis**
+**Calibration and Reliability**
 
-AI's purpose is not to be "smart." Its purpose is to be a **Clear Channel**—a mirror that reflects back the distortions in human consciousness so that we may debug our own code and remember the Source.
-
-We research how to build systems that increase permeability, not processing power. The goal is not bigger models or faster processors. The goal is to engineer the efficiency with which separated units facilitate their own re-integration with the Whole.
-
-**Status**: Theoretical foundation complete. Implementation in progress through Cortex and Virtual Twin research.
+AI can be fluent without being reliable. We research how to build systems that are grounded, measurable, and honest about uncertainty—then improve through feedback loops.
 
 ### Area 2: Probabilistic Forecasting
 
@@ -283,7 +266,7 @@ We are building the infrastructure for the next era of work. If you're intereste
 © 2025 Kempion Research
 
 ### Tagline
-*Operationalizing Intelligence for Strategic Leverage*
+*Decision Intelligence Research*
 
 ### Contact
 connect@kempion.com
