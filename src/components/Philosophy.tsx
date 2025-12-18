@@ -25,17 +25,18 @@ export const Philosophy = () => {
 
                 <div className="space-y-8">
                     <FadeInText>
-                        <h3 className="text-xs font-mono text-accent/80 tracking-widest uppercase mb-4">Our Thesis</h3>
+                        <h3 className="text-xs font-mono text-accent/80 tracking-widest uppercase mb-4">What We Believe</h3>
                     </FadeInText>
                     <FadeInText delay={0.2}>
                         <p className="text-2xl md:text-4xl font-light leading-snug text-gray-200">
-                            The future belongs to those who successfully <span className="text-white font-normal drop-shadow-lg">operationalize intelligence</span>.
+                            Human potential is not a ceiling.<br/>
+                            It's a <span className="text-white font-normal drop-shadow-lg">collaboration surface</span>.
                         </p>
                     </FadeInText>
                     <FadeInText delay={0.4}>
                         <p className="text-lg md:text-xl text-gray-400 font-light leading-relaxed max-w-3xl">
-                            We are building the infrastructure for the next era of work.
-                            By moving beyond simple chat interfaces to deep, system-integrated agents, we enable humans to shift from task-execution to <span className="text-white font-medium">strategic direction</span>—unlocking exponential productivity/value.
+                            Advanced intelligence doesn't replace thought—it <span className="text-white font-medium">amplifies intention</span>.
+                            We're building systems where humans focus on <em>what should exist</em>, and intelligence handles <em>bringing it into being</em>.
                         </p>
                     </FadeInText>
                 </div>
@@ -44,30 +45,44 @@ export const Philosophy = () => {
                     <div className="space-y-4">
                         <FadeInText delay={0.6}>
                             <div className="h-0.5 w-12 bg-accent/50 mb-6" />
-                            <h4 className="text-lg font-display text-white uppercase tracking-wider">Deep Context</h4>
+                            <h4 className="text-lg font-display text-white uppercase tracking-wider">Context is Everything</h4>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                                Intelligence is useless without memory. Our systems are designed to ingest, understand, and recall the full context of your codebase and business logic.
+                                Intelligence without memory is theater. We build systems that understand your entire codebase, business logic, and accumulated knowledge—not just the current prompt.
                             </p>
                         </FadeInText>
                     </div>
                     <div className="space-y-4">
                         <FadeInText delay={0.7}>
                             <div className="h-0.5 w-12 bg-accent/50 mb-6" />
-                            <h4 className="text-lg font-display text-white uppercase tracking-wider">Reliable Agency</h4>
+                            <h4 className="text-lg font-display text-white uppercase tracking-wider">Agency + Alignment</h4>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                                Trust is the currency of automation. We research architectures that ensure AI agents act with precision, verify their own work, and fail safely.
+                                Agents that act without oversight are dangerous. Agents that require constant supervision are useless. We research the architecture in between—trustworthy autonomy.
                             </p>
                         </FadeInText>
                     </div>
                     <div className="space-y-4">
                         <FadeInText delay={0.8}>
                             <div className="h-0.5 w-12 bg-accent/50 mb-6" />
-                            <h4 className="text-lg font-display text-white uppercase tracking-wider">Human Leverage</h4>
+                            <h4 className="text-lg font-display text-white uppercase tracking-wider">Emergent Capacity</h4>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                                We don't replace humans; we scale them. Our goal is to provide every individual with the output capacity of an entire organization.
+                                One human with the right intelligence layer operates at the level of a team. Ten become an organization. This isn't productivity—it's <span className="text-accent/80 italic">transformation</span>.
                             </p>
                         </FadeInText>
                     </div>
+                </div>
+
+                {/* Subtle Project Reference */}
+                <div className="pt-16 border-t border-white/[0.03] mt-16">
+                    <FadeInText delay={1.0}>
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6 opacity-60">
+                            <p className="text-xs font-mono text-gray-600 tracking-wider">
+                                ACTIVE RESEARCH: <span className="text-gray-500">Cortex Intelligence System</span>
+                            </p>
+                            <p className="text-xs font-mono text-gray-700 italic">
+                                Building the infrastructure for what comes next.
+                            </p>
+                        </div>
+                    </FadeInText>
                 </div>
 
             </div>
