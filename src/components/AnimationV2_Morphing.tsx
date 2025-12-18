@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -92,7 +92,7 @@ const Particles = () => {
         return () => clearInterval(interval);
     }, []);
 
-    useFrame((state) => {
+    useFrame(() => {
         if (!points.current) return;
 
         const targetPositions = shapes[targetShape];

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 // import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -66,9 +66,10 @@ const SandParticles = () => {
     // const [rotationSpeed, setRotationSpeed] = useState(0.2); // Removed unused state
 
     // Simulation Refs
-    const currentPositions = useRef(new Float32Array(cloudPos)); // Start at cloud
-    // We modify the buffer attribute directly, but keeping a ref for logic is good.
-    // Actually, we can just read/write the geometry attribute.
+    // We modify the buffer attribute directly.
+    // Keeping this ref for potential future logic reference.
+    const _currentPositions = useRef(new Float32Array(cloudPos)); // Start at cloud
+    void _currentPositions; // Suppress unused warning
 
     // Cycle Logic
     useEffect(() => {
@@ -95,7 +96,7 @@ const SandParticles = () => {
         return () => clearTimeout(timeout);
     }, [phase]);
 
-    useFrame((state, delta) => {
+    useFrame((_state, delta) => {
         if (!points.current) return;
 
         const posAttr = points.current.geometry.attributes.position;

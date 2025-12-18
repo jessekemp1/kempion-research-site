@@ -1,6 +1,9 @@
 import { useRef } from 'react';
 import { Hero } from './components/Hero';
-import { Philosophy } from './components/Philosophy';
+
+// PHILOSOPHY VERSIONS - Uncomment to switch
+// import { Philosophy } from './components/Philosophy'; // V1: Original "collaboration surface"
+import { PhilosophyV2 as Philosophy } from './components/PhilosophyV2'; // V2: Manifesto-aligned "complexity is failure"
 
 // ANIMATION VERSIONS - Uncomment to switch
 // import AnimationV1_Fluid from './components/AnimationV1_Fluid'; // V1: Original Fluid Waves
