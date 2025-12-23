@@ -14,7 +14,25 @@ export const Hero = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1.8, ease: "easeOut" }}
                     className="relative group"
+                    onMouseMove={(e) => {
+                        const bounds = e.currentTarget.getBoundingClientRect();
+                        const x = e.clientX - bounds.left;
+                        const y = e.clientY - bounds.top;
+                        e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+                        e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+                    }}
                 >
+                    {/* Interactive Mouse Glow */}
+                    <div
+                        className="absolute w-[300px] h-[300px] bg-white/10 blur-[80px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{
+                            left: 'var(--mouse-x)',
+                            top: 'var(--mouse-y)',
+                            transform: 'translate(-50%, -50%)',
+                            zIndex: 0
+                        }}
+                    />
+
                     {/* The Glow Behind - Refined */}
                     <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full scale-125 opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
                     <div className="absolute inset-0 bg-accent/5 blur-2xl rounded-full scale-150 opacity-40" />
