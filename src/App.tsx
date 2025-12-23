@@ -11,7 +11,9 @@ import { PhilosophyV2 as Philosophy } from './components/PhilosophyV2'; // V2: M
 // import AnimationV3_SandCube from './components/AnimationV3_SandCube'; // V3: Interactive Sand Cube
 // import AnimationV4_Smooth from './components/AnimationV4_Smooth'; // V4: Optimized Spring Physics
 // import AnimationV5_Enhanced from './components/AnimationV5_Enhanced'; // V5: Enhanced with scroll/click/sphere (Previous)
-import AnimationV7_Convergence from './components/AnimationV7_Convergence'; // V7: 5 Clusters Converging (Current)
+import AnimationV6_EventHorizon from './components/AnimationV6_EventHorizon'; // V6: 20k Particles, Scroll Interaction, Flow (Restored)
+// import AnimationV7_Convergence from './components/AnimationV7_Convergence'; // V7: 5 Clusters Converging (Archived)
+
 
 
 function App() {
@@ -27,7 +29,9 @@ function App() {
         {/* <AnimationV3_SandCube /> */}
         {/* <AnimationV4_Smooth /> */}
         {/* <AnimationV5_Enhanced /> */}
-        <AnimationV7_Convergence />
+        <AnimationV6_EventHorizon />
+        {/* <AnimationV7_Convergence /> */}
+
 
       </div>
 
