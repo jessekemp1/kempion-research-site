@@ -10,7 +10,9 @@ import { PhilosophyV2 as Philosophy } from './components/PhilosophyV2'; // V2: M
 // import AnimationV2_Morphing from './components/AnimationV2_Morphing'; // V2: Cloud/Sphere/Cube Morph
 // import AnimationV3_SandCube from './components/AnimationV3_SandCube'; // V3: Interactive Sand Cube
 // import AnimationV4_Smooth from './components/AnimationV4_Smooth'; // V4: Optimized Spring Physics
-import AnimationV5_Enhanced from './components/AnimationV5_Enhanced'; // V5: Enhanced with scroll/click/sphere (Current)
+// import AnimationV5_Enhanced from './components/AnimationV5_Enhanced'; // V5: Enhanced with scroll/click/sphere (Previous)
+import AnimationV7_Convergence from './components/AnimationV7_Convergence'; // V7: 5 Clusters Converging (Current)
+
 
 function App() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +26,9 @@ function App() {
         {/* <AnimationV2_Morphing /> */}
         {/* <AnimationV3_SandCube /> */}
         {/* <AnimationV4_Smooth /> */}
-        <AnimationV5_Enhanced />
+        {/* <AnimationV5_Enhanced /> */}
+        <AnimationV7_Convergence />
+
       </div>
 
       {/* Content Layer */}
