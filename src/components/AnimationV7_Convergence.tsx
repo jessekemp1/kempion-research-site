@@ -4,7 +4,7 @@ import * as THREE from 'three';
 
 const PARTICLE_COUNT = 20000;
 const CLUSTER_COUNT = 5;
-const ANIMATION_SPEED = 0.015; // Slightly faster for convergence energy
+const ANIMATION_SPEED = 0.015;
 
 // --- Geometry Generators ---
 
@@ -12,22 +12,18 @@ const ANIMATION_SPEED = 0.015; // Slightly faster for convergence energy
 const getClusters = (count: number) => {
     const positions = new Float32Array(count * 3);
     const particlesPerCluster = Math.floor(count / CLUSTER_COUNT);
-    const clusterSpread = 14; // How far apart the centers are
+    const clusterSpread = 14;
 
     for (let c = 0; c < CLUSTER_COUNT; c++) {
-        // Calculate cluster center (arranged in a pentagon/circle)
         const angle = (c / CLUSTER_COUNT) * Math.PI * 2;
         const centerX = Math.cos(angle) * clusterSpread;
         const centerY = Math.sin(angle) * clusterSpread;
-        // Z-depth variation for 3D feel
         const centerZ = (Math.random() - 0.5) * 5;
 
         for (let i = 0; i < particlesPerCluster; i++) {
             const idx = (c * particlesPerCluster + i) * 3;
 
-            // Random diffusion within cluster (Gaussian-ish)
-            // r = random radius from center
-            const r = Math.pow(Math.random(), 0.5) * 6; // Cluster radius
+            const r = Math.pow(Math.random(), 0.5) * 6;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
 
@@ -36,7 +32,6 @@ const getClusters = (count: number) => {
             positions[idx + 2] = centerZ + r * Math.cos(phi);
         }
     }
-    // Fill remainder if any
     return positions;
 };
 
@@ -44,8 +39,11 @@ const getClusters = (count: number) => {
 const getSingularity = (count: number) => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-        // Dense central sphere
-        const r = Math.pow(Math.random(), 3) * 7; // Power 3 biases heavily towards center (dense core)
+        // Extremely dense central core ("Tight Power")
+        // High power (5) creates strong gravity well visual
+        const power = 5;
+        const r = Math.pow(Math.random(), power) * 6;
+
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
 
@@ -64,33 +62,32 @@ const ConvergenceParticles = () => {
         const cl = getClusters(PARTICLE_COUNT);
         const sg = getSingularity(PARTICLE_COUNT);
 
-        // Colors: Each cluster gets a slight tint?
-        // Let's keep it "Kempion style" - mostly Blue/White, but maybe subtle variations
         const cols = new Float32Array(PARTICLE_COUNT * 3);
         const particlesPerCluster = Math.floor(PARTICLE_COUNT / CLUSTER_COUNT);
 
-        // Base Colors
+        // Base Colors - "Elegant Power" Palette
+        // Deep blues, rich cyans, and pure white energy
         const bases = [
-            new THREE.Color("#00aaff"), // Blue
-            new THREE.Color("#00ffff"), // Cyan
-            new THREE.Color("#4da6ff"), // Sky
-            new THREE.Color("#0088cc"), // Deep
-            new THREE.Color("#e0f7ff"), // White-ish
+            new THREE.Color("#0044cc"), // Deep Cobalt
+            new THREE.Color("#00aaff"), // Kempion Blue
+            new THREE.Color("#99ddff"), // Sky
+            new THREE.Color("#ffffff"), // Pure Energy
+            new THREE.Color("#001133"), // Void
         ];
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
-            // Determine which cluster this particle originally belongs to
             const clusterIdx = Math.floor(i / particlesPerCluster);
             const validIdx = Math.min(clusterIdx, 4);
             const baseCol = bases[validIdx];
 
-            // 10% chance of being "Hot White" regardless of cluster
-            const isHot = Math.random() > 0.9;
+            // 20% "Core" particles - Pure White/Warm Gold brightness ("Hope")
+            const isCore = Math.random() > 0.8;
 
-            if (isHot) {
+            if (isCore) {
+                // Subtle warm white for hope/energy
                 cols[i * 3] = 1.0;
-                cols[i * 3 + 1] = 1.0;
-                cols[i * 3 + 2] = 1.0;
+                cols[i * 3 + 1] = 0.98;
+                cols[i * 3 + 2] = 0.90;
             } else {
                 cols[i * 3] = baseCol.r;
                 cols[i * 3 + 1] = baseCol.g;
@@ -104,7 +101,7 @@ const ConvergenceParticles = () => {
     // --- State ---
     const state = useRef({
         targetPositions: clusterPos,
-        mixRatio: 0 // 0 = Clusters, 1 = Singularity
+        mixRatio: 0
     });
 
     // --- Scroll Handler ---
@@ -112,18 +109,12 @@ const ConvergenceParticles = () => {
         const handleScroll = () => {
             const h = document.documentElement.scrollHeight - window.innerHeight;
             if (h === 0) return;
-
             const progress = window.scrollY / h;
-            // 0 -> 1
-
-            // Map scroll to mix ratio
-            // We want them to start converging immediately but slowly, then snap together
-            // Let's try direct mapping first
             state.current.mixRatio = Math.min(Math.max(progress * 1.2, 0), 1);
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll(); // Init
+        handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -135,37 +126,26 @@ const ConvergenceParticles = () => {
 
         const time = clock.getElapsedTime();
 
-        // Add rotation based on mix
-        // Clusters rotate slowly separate? No, global rotation is simpler.
-        // As they converge, rotation speeds up (conservation of angular momentum feel)
         const rotationSpeed = 0.02 + (s.mixRatio * 0.08);
         pointsRef.current.rotation.y += rotationSpeed * 0.01 + 0.001;
-        // Add slight Z-tilt
         pointsRef.current.rotation.z = Math.sin(time * 0.1) * 0.1;
-
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const ix = i * 3;
             const iy = ix + 1;
             const iz = ix + 2;
 
-            // Interpolate Target
-            // We LERP the *target*, or we LERP the *position*?
-            // "Simplify" -> LERP the target, let physics catch up.
-
             const pct = s.mixRatio;
-            // Ease in/out
             const t = pct * pct * (3 - 2 * pct);
 
             const tx = clusterPos[ix] + (singularityPos[ix] - clusterPos[ix]) * t;
             const ty = clusterPos[iy] + (singularityPos[iy] - clusterPos[iy]) * t;
             const tz = clusterPos[iz] + (singularityPos[iz] - clusterPos[iz]) * t;
 
-            // Noise (Organic) - reduces as they converge (more ordered)
-            const noiseAmp = 0.05 * (1 - t) + 0.01;
+            // Reduce noise significantly for "Tight" look
+            const noiseAmp = 0.015 * (1 - t) + 0.002;
             const noise = Math.sin(time + i * 0.01) * noiseAmp;
 
-            // Update Position with spring/lerp
             positions[ix] += (tx + noise - positions[ix]) * ANIMATION_SPEED;
             positions[iy] += (ty + noise - positions[iy]) * ANIMATION_SPEED;
             positions[iz] += (tz + noise - positions[iz]) * ANIMATION_SPEED;
@@ -180,7 +160,7 @@ const ConvergenceParticles = () => {
                 <bufferAttribute
                     attach="attributes-position"
                     count={clusterPos.length / 3}
-                    array={clusterPos.slice()} // Copy to not mutate source
+                    array={clusterPos.slice()}
                     itemSize={3}
                 />
                 <bufferAttribute
@@ -192,11 +172,11 @@ const ConvergenceParticles = () => {
             </bufferGeometry>
             <pointsMaterial
                 attach="material"
-                size={0.035}
+                size={0.028} // Finer
                 vertexColors
                 sizeAttenuation
                 transparent
-                opacity={0.85}
+                opacity={0.9} // Dense/Powerful
                 blending={THREE.AdditiveBlending}
                 depthWrite={false}
             />
