@@ -4,11 +4,9 @@ import * as THREE from 'three';
 
 const PARTICLE_COUNT = 20000;
 const CLUSTER_COUNT = 5;
-const ANIMATION_SPEED = 0.015;
 
-// --- Geometry Generators ---
+// --- Geometry Generators (Preserved from refined version) ---
 
-// 1. Five Distinct Clusters (The "5 Intelligences")
 const getClusters = (count: number) => {
     const positions = new Float32Array(count * 3);
     const particlesPerCluster = Math.floor(count / CLUSTER_COUNT);
@@ -22,7 +20,6 @@ const getClusters = (count: number) => {
 
         for (let i = 0; i < particlesPerCluster; i++) {
             const idx = (c * particlesPerCluster + i) * 3;
-
             const r = Math.pow(Math.random(), 0.5) * 6;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
@@ -35,15 +32,11 @@ const getClusters = (count: number) => {
     return positions;
 };
 
-// 2. The Singularity (Converged Super-Intelligence)
 const getSingularity = (count: number) => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-        // Extremely dense central core ("Tight Power")
-        // High power (5) creates strong gravity well visual
-        const power = 5;
+        const power = 5; // Tight core
         const r = Math.pow(Math.random(), power) * 6;
-
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
 
@@ -65,8 +58,7 @@ const ConvergenceParticles = () => {
         const cols = new Float32Array(PARTICLE_COUNT * 3);
         const particlesPerCluster = Math.floor(PARTICLE_COUNT / CLUSTER_COUNT);
 
-        // Base Colors - "Elegant Power" Palette
-        // Deep blues, rich cyans, and pure white energy
+        // Elegant Power Palette
         const bases = [
             new THREE.Color("#0044cc"), // Deep Cobalt
             new THREE.Color("#00aaff"), // Kempion Blue
@@ -80,11 +72,9 @@ const ConvergenceParticles = () => {
             const validIdx = Math.min(clusterIdx, 4);
             const baseCol = bases[validIdx];
 
-            // 20% "Core" particles - Pure White/Warm Gold brightness ("Hope")
-            const isCore = Math.random() > 0.8;
+            const isCore = Math.random() > 0.80; // 20% Hope
 
             if (isCore) {
-                // Subtle warm white for hope/energy
                 cols[i * 3] = 1.0;
                 cols[i * 3 + 1] = 0.98;
                 cols[i * 3 + 2] = 0.90;
@@ -99,36 +89,64 @@ const ConvergenceParticles = () => {
     }, []);
 
     // --- State ---
+    // mixRatio: 0 (Clusters) -> 1 (Singularity)
     const state = useRef({
-        targetPositions: clusterPos,
-        mixRatio: 0
+        mixRatio: 0,
+        time: 0
     });
 
-    // --- Scroll Handler ---
-    useEffect(() => {
-        const handleScroll = () => {
-            const h = document.documentElement.scrollHeight - window.innerHeight;
-            if (h === 0) return;
-            const progress = window.scrollY / h;
-            state.current.mixRatio = Math.min(Math.max(progress * 1.2, 0), 1);
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    // --- Render Loop ---
-    useFrame(({ clock }) => {
+    // --- Render Loop (The Dance) ---
+    useFrame(({ clock }, delta) => {
         if (!pointsRef.current) return;
         const s = state.current;
         const positions = pointsRef.current.geometry.attributes.position.array as Float32Array;
 
-        const time = clock.getElapsedTime();
+        // --- CHOREOGRAPHY ---
+        // Cycle: 24s total
+        // 0-4s: CLOUD (Dance)
+        // 4-10s: CONVERGE (Spiral In)
+        // 10-18s: SINGULARITY (Slow/Hold)
+        // 18-24s: RELEASE (Spiral Out)
 
-        const rotationSpeed = 0.02 + (s.mixRatio * 0.08);
-        pointsRef.current.rotation.y += rotationSpeed * 0.01 + 0.001;
-        pointsRef.current.rotation.z = Math.sin(time * 0.1) * 0.1;
+        const totalTime = clock.getElapsedTime();
+        const cycle = totalTime % 24;
+
+        let targetMix = 0;
+        let pFactor = 0; // Pacing factor (0 = normal, 1 = very slow)
+
+        if (cycle < 4) {
+            // CLOUD PHASE
+            targetMix = 0;
+            pFactor = 0; // Fast/Normal dance
+        } else if (cycle < 10) {
+            // CONVERGE PHASE (4s to 10s = 6s duration)
+            const t = (cycle - 4) / 6;
+            // Smoothstep ease
+            targetMix = t * t * (3 - 2 * t);
+            pFactor = t * 0.5; // Slow down slightly as we approach
+        } else if (cycle < 18) {
+            // SINGULARITY PHASE (Hold 8s)
+            targetMix = 1;
+            pFactor = 0.8; // SLOW IT DOWN significantly here
+        } else {
+            // RELEASE PHASE (18s to 24s = 6s duration)
+            const t = (cycle - 18) / 6;
+            targetMix = 1 - (t * t * (3 - 2 * t));
+            pFactor = 0.2; // Speed back up
+        }
+
+        // Smooth follow for mixRatio
+        s.mixRatio += (targetMix - s.mixRatio) * 0.05;
+
+        // --- MOTION ---
+        // Global Rotation reflects pacing
+        // Fast when cloud (0), Slow when singularity (1)
+        const rotationSpeed = 0.04 * (1 - pFactor * 0.8);
+        pointsRef.current.rotation.y += rotationSpeed * delta * 5;
+
+        // Gentle Sway
+        pointsRef.current.rotation.z = Math.sin(totalTime * 0.1) * 0.05;
+
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const ix = i * 3;
@@ -136,19 +154,41 @@ const ConvergenceParticles = () => {
             const iz = ix + 2;
 
             const pct = s.mixRatio;
-            const t = pct * pct * (3 - 2 * pct);
 
-            const tx = clusterPos[ix] + (singularityPos[ix] - clusterPos[ix]) * t;
-            const ty = clusterPos[iy] + (singularityPos[iy] - clusterPos[iy]) * t;
-            const tz = clusterPos[iz] + (singularityPos[iz] - clusterPos[iz]) * t;
+            // "The Dance": Orbital Spirals
+            // As they converge (pct goes 0->1), we add a tangential force
 
-            // Reduce noise significantly for "Tight" look
-            const noiseAmp = 0.015 * (1 - t) + 0.002;
-            const noise = Math.sin(time + i * 0.01) * noiseAmp;
+            // Linear target LERP
+            let tx = clusterPos[ix] + (singularityPos[ix] - clusterPos[ix]) * pct;
+            let ty = clusterPos[iy] + (singularityPos[iy] - clusterPos[iy]) * pct;
+            let tz = clusterPos[iz] + (singularityPos[iz] - clusterPos[iz]) * pct;
 
-            positions[ix] += (tx + noise - positions[ix]) * ANIMATION_SPEED;
-            positions[iy] += (ty + noise - positions[iy]) * ANIMATION_SPEED;
-            positions[iz] += (tz + noise - positions[iz]) * ANIMATION_SPEED;
+            // Spiral Offset: twist tx/ty around center based on PCT
+            if (pct > 0.1 && pct < 0.9) {
+                const twist = pct * 2.0; // Twist amount
+                const cosT = Math.cos(twist);
+                const sinT = Math.sin(twist);
+                const twistedX = tx * cosT - tz * sinT;
+                const twistedZ = tx * sinT + tz * cosT;
+                tx = twistedX;
+                tz = twistedZ;
+            }
+
+            // Biological Noise
+            // Reduced amplitude when pFactor is high (Singularity) -> "Slow/Calm"
+            const noiseAmp = (0.015 * (1 - pct) + 0.002) * (1 - pFactor * 0.5);
+            // Slower frequency when in Singularity
+            const noiseFreq = (0.5 + i * 0.0001) * (1 - pFactor * 0.8);
+
+            const noise = Math.sin(totalTime * 2.0 * noiseFreq) * noiseAmp;
+
+            // Update Position (Spring physics feel)
+            // Speed also modulated by pacing (make it snap less, float more)
+            const speed = 0.02 * (1 - pFactor * 0.6);
+
+            positions[ix] += (tx + noise - positions[ix]) * speed;
+            positions[iy] += (ty + noise - positions[iy]) * speed;
+            positions[iz] += (tz + noise - positions[iz]) * speed;
         }
 
         pointsRef.current.geometry.attributes.position.needsUpdate = true;
@@ -172,11 +212,11 @@ const ConvergenceParticles = () => {
             </bufferGeometry>
             <pointsMaterial
                 attach="material"
-                size={0.028} // Finer
+                size={0.028} // Refined Elegant Size
                 vertexColors
                 sizeAttenuation
                 transparent
-                opacity={0.9} // Dense/Powerful
+                opacity={0.9}
                 blending={THREE.AdditiveBlending}
                 depthWrite={false}
             />
