@@ -5,15 +5,22 @@ import { Hero } from './components/Hero';
 // import { Philosophy } from './components/Philosophy'; // V1: Original "collaboration surface"
 import { PhilosophyV2 as Philosophy } from './components/PhilosophyV2'; // V2: Manifesto-aligned "complexity is failure"
 
+// PHASE 1 COMPONENTS - New content sections
+import { IntelligenceStack } from './components/IntelligenceStack';
+import { ResearchPillars } from './components/ResearchPillars';
+import { CodeShowcase } from './components/CodeShowcase';
+import { ProofOfWork } from './components/ProofOfWork';
+import { VisionTimeline } from './components/VisionTimeline';
+
 // ANIMATION VERSIONS - Uncomment to switch
-// import AnimationV1_Fluid from './components/AnimationV1_Fluid'; // V1: Original Fluid Waves
-// import AnimationV2_Morphing from './components/AnimationV2_Morphing'; // V2: Cloud/Sphere/Cube Morph
-// import AnimationV3_SandCube from './components/AnimationV3_SandCube'; // V3: Interactive Sand Cube
-// import AnimationV4_Smooth from './components/AnimationV4_Smooth'; // V4: Optimized Spring Physics
-import AnimationV5_Enhanced from './components/AnimationV5_Enhanced'; // V5: Enhanced with scroll/click/sphere (Previous)
-// import AnimationV6_EventHorizon from './components/AnimationV6_EventHorizon'; // V6: 20k Particles, Scroll Interaction, Flow (Restored)
-// import AnimationV7_Convergence from './components/AnimationV7_Convergence'; // V7: 5 Clusters Converging (Archived)
-// import AnimationV8_NaturalGenius from './components/AnimationV8_NaturalGenius'; // V8: Cloud -> Sphere -> Cube Loop (Archived)
+// import AnimationV1_Fluid from './components/animations/v1/AnimationV1_Fluid'; // V1: Original Fluid Waves
+// import AnimationV2_Morphing from './components/animations/v1/AnimationV2_Morphing'; // V2: Cloud/Sphere/Cube Morph
+// import AnimationV3_SandCube from './components/animations/v1/AnimationV3_SandCube'; // V3: Interactive Sand Cube
+// import AnimationV4_Smooth from './components/animations/v1/AnimationV4_Smooth'; // V4: Optimized Spring Physics
+import AnimationV5_Enhanced from './components/animations/v1/AnimationV5_Enhanced'; // V5: Enhanced with scroll/click/sphere (Previous)
+// import AnimationV6_EventHorizon from './components/animations/v1/AnimationV6_EventHorizon'; // V6: 20k Particles, Scroll Interaction, Flow (Restored)
+// import AnimationV7_Convergence from './components/animations/v1/AnimationV7_Convergence'; // V7: 5 Clusters Converging (Archived)
+// import AnimationV8_NaturalGenius from './components/animations/v1/AnimationV8_NaturalGenius'; // V8: Cloud -> Sphere -> Cube Loop (Archived)
 
 
 
@@ -35,6 +42,7 @@ function App() {
         {/* <AnimationV6_EventHorizon /> */}
         {/* <AnimationV7_Convergence /> */}
         {/* <AnimationV8_NaturalGenius /> */}
+        {/* Additional animation variants available in animations/v1/ */}
 
 
 
@@ -46,6 +54,11 @@ function App() {
         <div className="pointer-events-auto">
           <Hero />
           <Philosophy />
+          <IntelligenceStack />
+          <ResearchPillars />
+          <CodeShowcase />
+          <ProofOfWork />
+          <VisionTimeline />
 
           {/* Enhanced Footer */}
           <footer className="py-16 px-6 md:px-24">
