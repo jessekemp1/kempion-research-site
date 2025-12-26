@@ -14,7 +14,7 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useId, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const BREACH_PARTICLES: Array<{
     left: string;
@@ -53,8 +53,6 @@ const FadeInText = ({ children, delay = 0 }: { children: React.ReactNode, delay?
 };
 
 export const PhilosophyV2 = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const detailsId = useId();
 
     return (
         <section className="min-h-screen w-full py-32 px-6 md:px-24 flex flex-col items-center justify-center bg-transparent relative z-10 overflow-hidden">
@@ -88,190 +86,41 @@ export const PhilosophyV2 = () => {
 
             <div className="max-w-5xl text-center md:text-left space-y-24">
 
-                {/* The Thesis (Public) */}
+                {/* The Thesis */}
                 <div className="space-y-8">
                     <FadeInText>
-                        <h3 className="text-xs font-mono text-accent/80 tracking-widest uppercase mb-4">Decision Intelligence Research</h3>
+                        <h3 className="text-xs font-mono text-accent/80 tracking-widest uppercase mb-4">
+                            Decision Intelligence Research
+                        </h3>
                     </FadeInText>
                     <FadeInText delay={0.2}>
                         <p className="text-2xl md:text-4xl font-light leading-snug text-gray-200">
-                            Advancing Decision Intelligence.
+                            Intelligence measured by outcomes, not confidence.
                         </p>
                     </FadeInText>
                     <FadeInText delay={0.4}>
                         <p className="text-lg md:text-xl text-gray-400 font-light leading-relaxed max-w-3xl">
-                            Calibrated decision intelligence with <span className="text-white font-medium">memory</span>, <span className="text-white font-medium">scenario bands</span>, and <span className="text-white font-medium">learning</span>.
+                            We build decision systems that remember context, show uncertainty honestly, and learn from results.
                         </p>
                     </FadeInText>
-
-                    {/* What we build (Public) */}
                     <FadeInText delay={0.55}>
-                        <div className="max-w-3xl space-y-5">
-                            <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-                                Kempion Research builds decision intelligence systems. These tools help individuals and organizations make better choices when the situation is complex, the information is incomplete, and the costs of being wrong are real.{' '}
-                                <button
-                                    type="button"
-                                    aria-expanded={isExpanded}
-                                    aria-controls={detailsId}
-                                    onClick={() => setIsExpanded((v) => !v)}
-                                    className="text-white/80 underline underline-offset-4 decoration-white/15 hover:decoration-white/50 hover:text-white/90 transition-colors"
-                                >
-                                    (see model)
-                                </button>
-                            </p>
-                            <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-                                Many AI systems can be fluent without being reliable. Our approach is different: we optimize for <span className="text-white/90">calibration</span> and <span className="text-white/90">outcomes</span>, not eloquence.
-                            </p>
-                            <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-                                We combine three capabilities that turn "answers" into usable judgment:
-                            </p>
-                            <ul className="text-sm md:text-base text-gray-500 leading-relaxed space-y-2 pl-5 list-disc marker:text-gray-700">
-                                <li>
-                                    <span className="text-white/90">Memory</span>: persistent context (goals, constraints, history, domain knowledge)
-                                </li>
-                                <li>
-                                    <span className="text-white/90">Scenario Bands</span>: explicit uncertainty (optimistic / likely / conservative) with the conditions that would move the forecast
-                                </li>
-                                <li>
-                                    <span className="text-white/90">Learning</span>: feedback loops that measure prediction vs. outcome and improve over time
-                                </li>
-                            </ul>
-                            <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-                                Together, these move people from hoping to knowing - not by removing uncertainty, but by making it visible, actionable, and measurable.
-                            </p>
-
-                            {isExpanded ? (
-                                <div
-                                    id={detailsId}
-                                    className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-5 md:px-6 md:py-6 text-left space-y-6"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="space-y-1">
-                                            <p className="text-xs font-mono text-gray-500 tracking-widest uppercase">
-                                                Deeper Dive
-                                            </p>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                A practical model for reliable decisions: memory, uncertainty, learning, and bounded agency.
-                                            </p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsExpanded(false)}
-                                            className="shrink-0 text-xs font-mono text-gray-500 hover:text-white transition-colors border border-white/10 hover:border-white/30 rounded-full px-3 py-1"
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <h4 className="text-sm font-display text-white uppercase tracking-wider">1. The Problem</h4>
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            Most decisions break down in the same few places:
-                                        </p>
-                                        <ul className="text-sm text-gray-500 leading-relaxed space-y-1 pl-5 list-disc marker:text-gray-700">
-                                            <li><span className="text-white/90">Missing context</span>: history and constraints are not carried forward</li>
-                                            <li><span className="text-white/90">False certainty</span>: single-point answers hide risk and conditions</li>
-                                            <li><span className="text-white/90">No learning loop</span>: outcomes are not compared against predictions</li>
-                                            <li><span className="text-white/90">Misaligned automation</span>: either risky autonomy or constant supervision</li>
-                                        </ul>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <h4 className="text-sm font-display text-white uppercase tracking-wider">2. Our Thesis (Operational)</h4>
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            Intelligence is measured by <span className="text-white/90">calibration</span> and <span className="text-white/90">outcomes</span>, not confidence.
-                                        </p>
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            A decision intelligence system should:
-                                        </p>
-                                        <ul className="text-sm text-gray-500 leading-relaxed space-y-1 pl-5 list-disc marker:text-gray-700">
-                                            <li>recalls the right context at the right time</li>
-                                            <li>represents uncertainty explicitly</li>
-                                            <li>recommends actions with clear conditions and tradeoffs</li>
-                                            <li>learns from outcomes to improve future decisions</li>
-                                        </ul>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <h4 className="text-sm font-display text-white uppercase tracking-wider">3. The Kempion Model</h4>
-
-                                        <div className="space-y-2">
-                                            <h5 className="text-xs font-mono text-gray-500 tracking-widest uppercase">3.1 Memory (Deep Context)</h5>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                We treat context as infrastructure. Not a prompt. Not a chat log.
-                                            </p>
-                                            <p className="text-sm text-gray-500 leading-relaxed">Memory includes:</p>
-                                            <ul className="text-sm text-gray-500 leading-relaxed space-y-1 pl-5 list-disc marker:text-gray-700">
-                                                <li>goals and priorities</li>
-                                                <li>constraints (time, energy, capital, risk)</li>
-                                                <li>decision history (what you tried, what happened)</li>
-                                                <li>domain knowledge (codebases, markets, operations, health signals)</li>
-                                            </ul>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <h5 className="text-xs font-mono text-gray-500 tracking-widest uppercase">3.2 Scenario Bands (Uncertainty Made Usable)</h5>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                We do not ship single-point answers as "truth."
-                                            </p>
-                                            <p className="text-sm text-gray-500 leading-relaxed">We produce scenario bands:</p>
-                                            <ul className="text-sm text-gray-500 leading-relaxed space-y-1 pl-5 list-disc marker:text-gray-700">
-                                                <li><span className="text-white/90">Optimistic</span>: best reasonable case under stated conditions</li>
-                                                <li><span className="text-white/90">Likely</span>: central trajectory under normal variance</li>
-                                                <li><span className="text-white/90">Conservative</span>: downside-aware path when blockers occur</li>
-                                            </ul>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                Each scenario includes: conditions, risks, and what evidence would update the forecast.
-                                            </p>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <h5 className="text-xs font-mono text-gray-500 tracking-widest uppercase">3.3 Learning (Calibration Loops)</h5>
-                                            <p className="text-sm text-gray-500 leading-relaxed">Our systems log:</p>
-                                            <ul className="text-sm text-gray-500 leading-relaxed space-y-1 pl-5 list-disc marker:text-gray-700">
-                                                <li>the prediction (and its uncertainty)</li>
-                                                <li>the recommended action</li>
-                                                <li>what was chosen</li>
-                                                <li>the observed outcome</li>
-                                            </ul>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                Then we measure error and improve: predict - act - observe - compare - adjust.
-                                            </p>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <h5 className="text-xs font-mono text-gray-500 tracking-widest uppercase">3.4 Agency With Boundaries</h5>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                Automation without policy is unsafe. Policy without automation is useless.
-                                            </p>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                We focus on the architecture between:
-                                            </p>
-                                            <ul className="text-sm text-gray-500 leading-relaxed space-y-1 pl-5 list-disc marker:text-gray-700">
-                                                <li>advisor-only systems (safe, low leverage)</li>
-                                                <li>fully autonomous systems (high leverage, high risk)</li>
-                                            </ul>
-                                            <p className="text-sm text-gray-500 leading-relaxed">
-                                                We design autonomy ladders: what can be done automatically, what needs approval, and what is off-limits.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : null}
-                        </div>
+                        <p className="text-sm md:text-base text-gray-500 leading-relaxed max-w-3xl">
+                            Most AI is fluent but unreliable. Our systems optimize for calibration:
+                            when we say 70% likely, it happens 70% of the time.
+                        </p>
                     </FadeInText>
                 </div>
 
                 {/* Three Pillars */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-12 border-t border-white/5">
-                    
+
                     {/* Pillar 1: Memory */}
                     <div className="space-y-4">
                         <FadeInText delay={0.6}>
                             <div className="h-0.5 w-12 bg-accent/50 mb-6" />
                             <h4 className="text-lg font-display text-white uppercase tracking-wider">Memory</h4>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                                Persist the context that matters: goals, constraints, history, and domain knowledge.
+                                Goals, constraints, history, and domain knowledge persist across decisions. No amnesia.
                             </p>
                         </FadeInText>
                     </div>
@@ -282,7 +131,7 @@ export const PhilosophyV2 = () => {
                             <div className="h-0.5 w-12 bg-accent/50 mb-6" />
                             <h4 className="text-lg font-display text-white uppercase tracking-wider">Scenario Bands</h4>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                                Replace false certainty with ranges and conditions: optimistic, likely, conservative.
+                                Optimistic, likely, and conservative ranges. Plus the conditions that would shift the forecast.
                             </p>
                         </FadeInText>
                     </div>
@@ -293,22 +142,98 @@ export const PhilosophyV2 = () => {
                             <div className="h-0.5 w-12 bg-accent/50 mb-6" />
                             <h4 className="text-lg font-display text-white uppercase tracking-wider">Learning</h4>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                                Measure prediction vs. outcome, then improve through feedback loops.
+                                Every prediction compared against outcome. Error measured, model improved.
                             </p>
                         </FadeInText>
                     </div>
                 </div>
 
-                {/* Proof of Work Footer */}
-                <div className="pt-16 border-t border-white/[0.03] mt-16">
-                    <FadeInText delay={1.0}>
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-6 opacity-60">
-                            <p className="text-xs font-mono text-gray-600 tracking-wider">
-                                PROOF OF WORK: <span className="text-gray-500">VortexV2 | Alpha Arena | Cortex | Personal AI Dataset</span>
-                            </p>
-                            <p className="text-xs font-mono text-gray-700 italic">
-                                From hoping to knowing.
-                            </p>
+                {/* Proof of Work - Data Section */}
+                <div className="pt-16 border-t border-white/5">
+                    <FadeInText delay={0.9}>
+                        <h3 className="text-xs font-mono text-accent/80 tracking-widest uppercase mb-8">
+                            Proof of Work
+                        </h3>
+                    </FadeInText>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        {/* VortexV2 */}
+                        <FadeInText delay={1.0}>
+                            <div className="p-6 rounded-xl border border-white/5 bg-white/[0.02] space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-display text-white uppercase tracking-wider">
+                                        VortexV2
+                                    </h4>
+                                    <span className="text-[10px] font-mono text-accent/70 uppercase">
+                                        Marine Weather
+                                    </span>
+                                </div>
+                                <p className="text-sm text-gray-500 leading-relaxed">
+                                    Multi-model ensemble forecasting for offshore conditions.
+                                </p>
+                                <div className="grid grid-cols-2 gap-4 pt-2">
+                                    <div>
+                                        <p className="text-2xl font-light text-white">3.3%</p>
+                                        <p className="text-xs text-gray-600">better than ECMWF</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-2xl font-light text-white">36%</p>
+                                        <p className="text-xs text-gray-600">lower forecast bias</p>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-600 pt-2">
+                                    119 validated observation pairs. Production-ready for 2028 IMOCA 60 campaign.
+                                </p>
+                            </div>
+                        </FadeInText>
+
+                        {/* Alpha Arena */}
+                        <FadeInText delay={1.1}>
+                            <div className="p-6 rounded-xl border border-white/5 bg-white/[0.02] space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-display text-white uppercase tracking-wider">
+                                        Alpha Arena
+                                    </h4>
+                                    <span className="text-[10px] font-mono text-accent/70 uppercase">
+                                        Financial Intelligence
+                                    </span>
+                                </div>
+                                <p className="text-sm text-gray-500 leading-relaxed">
+                                    Pattern recognition and multi-model ensemble for trading decisions.
+                                </p>
+                                <div className="grid grid-cols-2 gap-4 pt-2">
+                                    <div>
+                                        <p className="text-2xl font-light text-white">+23.7%</p>
+                                        <p className="text-xs text-gray-600">6-month backtest return</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-2xl font-light text-white">2.05</p>
+                                        <p className="text-xs text-gray-600">Sharpe ratio</p>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-600 pt-2">
+                                    404 trades. 55% win rate. -7.4% max drawdown.
+                                </p>
+                            </div>
+                        </FadeInText>
+
+                    </div>
+
+                    {/* Cortex - Smaller Card */}
+                    <FadeInText delay={1.2}>
+                        <div className="mt-8 p-4 rounded-xl border border-white/5 bg-white/[0.01] flex items-center justify-between">
+                            <div>
+                                <h4 className="text-sm font-display text-white uppercase tracking-wider">
+                                    Cortex
+                                </h4>
+                                <p className="text-xs text-gray-500">
+                                    Development intelligence with 5-layer architecture. Sub-500ms response.
+                                </p>
+                            </div>
+                            <span className="text-[10px] font-mono text-gray-600 uppercase">
+                                Internal Tool
+                            </span>
                         </div>
                     </FadeInText>
                 </div>

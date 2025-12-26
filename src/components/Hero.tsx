@@ -76,10 +76,9 @@ export const Hero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2, duration: 1 }}
-                    className="mt-12 text-sm md:text-base font-sans text-gray-500 max-w-md tracking-wide leading-relaxed"
+                    className="mt-12 text-base md:text-lg font-sans text-gray-400 max-w-md tracking-wide leading-relaxed"
                 >
-                    ADVANCING<br />
-                    <span className="text-white font-medium">DECISION INTELLIGENCE</span>
+                    AI that measures itself against reality.
                 </motion.p>
             </div>
 

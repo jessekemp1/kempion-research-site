@@ -1,18 +1,35 @@
 // @ts-nocheck
-import React, { useRef, useMemo, useEffect } from 'react';
+/**
+ * AnimationV10_SmoothCycle
+ *
+ * Version 8 (marked for reference)
+ *
+ * Features:
+ * - 35,000 particles
+ * - 51 second automatic cycle
+ * - Cloud (4s) → Sphere (3s transition + 7s hold) → Cube (4s transition + 7s hold)
+ * - Sphere ⟷ Cube oscillation (twice, 4s transitions + 7s holds each)
+ * - Back to Cloud (4s transition)
+ * - Larger sphere (6.0) and cube (9.0)
+ * - Smoother entrance with gentle spiral rotation
+ * - Flow particles towards viewer during cloud phase (25% boost)
+ * - Brighter particles (#33ccff base, #ffffff accents)
+ */
+
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const PARTICLE_COUNT = 20000;
+const PARTICLE_COUNT = 35000;
 const ANIMATION_SPEED = 0.008;
 
 // Geometries
-const CUBE_SIZE = 7.5;
-const SPHERE_RADIUS = 4.8;
+const CUBE_SIZE = 9.0;
+const SPHERE_RADIUS = 6.0;
 
 // Void Dimensions
 const INNER_CUBE_SIZE = 3.5;
-const INNER_SPHERE_RADIUS = 2.0; // Hollow sphere center
+const INNER_SPHERE_RADIUS = 3.0;
 
 // Event Horizon Dimensions
 const EH_INNER_RADIUS = 2.5;
@@ -39,11 +56,10 @@ const getVoidSphere = (count: number) => {
         const y = r * Math.sin(phi) * Math.sin(theta);
         const z = r * Math.cos(phi);
 
-        // Hollow sphere - exclude particles within inner radius
-        const distanceFromCenter = Math.sqrt(x * x + y * y + z * z);
-        const insideInnerSphere = distanceFromCenter < INNER_SPHERE_RADIUS;
+        const halfS = INNER_CUBE_SIZE / 2;
+        const insideCube = (Math.abs(x) < halfS && Math.abs(y) < halfS && Math.abs(z) < halfS);
 
-        if (!insideInnerSphere) {
+        if (!insideCube) {
             positions[i * 3] = x;
             positions[i * 3 + 1] = y;
             positions[i * 3 + 2] = z;
@@ -73,27 +89,9 @@ const getEventHorizon = (count: number) => {
 const getCloud = (count: number) => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-        // Multi-layered distribution for depth and immersion
-        const layer = Math.random();
-
-        if (layer < 0.4) {
-            // Dense core (40%)
-            positions[i * 3] = (Math.random() - 0.5) * 40;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
-        } else if (layer < 0.7) {
-            // Mid layer (30%)
-            positions[i * 3] = (Math.random() - 0.5) * 60;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 45;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 45;
-        } else {
-            // Outer wisps (30%)
-            const angle = Math.random() * Math.PI * 2;
-            const radius = 25 + Math.random() * 20;
-            positions[i * 3] = Math.cos(angle) * radius + (Math.random() - 0.5) * 15;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
-            positions[i * 3 + 2] = Math.sin(angle) * radius + (Math.random() - 0.5) * 15;
-        }
+        positions[i * 3] = (Math.random() - 0.5) * 60;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
     return positions;
 };
@@ -101,27 +99,13 @@ const getCloud = (count: number) => {
 const getFlowPast = (count: number) => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-        // Create streaming flow pattern toward viewer
-        const streamLayer = Math.random();
+        // Wide X/Y similar to cloud
+        positions[i * 3] = (Math.random() - 0.5) * 80;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
 
-        if (streamLayer < 0.3) {
-            // Fast stream (30%) - closest to camera
-            positions[i * 3] = (Math.random() - 0.5) * 70;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
-            positions[i * 3 + 2] = 20 + Math.random() * 50;
-        } else if (streamLayer < 0.6) {
-            // Mid stream (30%)
-            positions[i * 3] = (Math.random() - 0.5) * 85;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 65;
-            positions[i * 3 + 2] = 10 + Math.random() * 40;
-        } else {
-            // Outer vortex stream (40%) - creates tunnel effect
-            const angle = Math.random() * Math.PI * 2;
-            const radius = 30 + Math.random() * 25;
-            positions[i * 3] = Math.cos(angle) * radius;
-            positions[i * 3 + 1] = Math.sin(angle) * radius;
-            positions[i * 3 + 2] = 15 + Math.random() * 45;
-        }
+        // Z Axis: heavily distributed towards/past camera (Camera Z=18)
+        // Range: 15 to 60
+        positions[i * 3 + 2] = 15 + Math.random() * 45;
     }
     return positions;
 };
@@ -196,37 +180,7 @@ const BiologicalParticles = () => {
     }, []);
 
     // --- State ---
-    const scrollState = useRef({
-        isScrolling: false,
-        scrollVelocity: 0,
-        lastScrollTime: 0
-    });
-
-    // --- Scroll Handler ---
-    useEffect(() => {
-        let scrollTimeout: NodeJS.Timeout;
-
-        const handleScroll = () => {
-            const now = performance.now();
-            const timeDelta = now - scrollState.current.lastScrollTime;
-
-            scrollState.current.isScrolling = true;
-            scrollState.current.scrollVelocity = Math.min(timeDelta > 0 ? 1000 / timeDelta : 0, 10);
-            scrollState.current.lastScrollTime = now;
-
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                scrollState.current.isScrolling = false;
-                scrollState.current.scrollVelocity = 0;
-            }, 150);
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            clearTimeout(scrollTimeout);
-        };
-    }, []);
+    // No state needed - fully automatic cycle
 
     // --- Render Loop ---
     useFrame(({ clock }) => {
@@ -234,78 +188,78 @@ const BiologicalParticles = () => {
         const positions = pointsRef.current.geometry.attributes.position.array as Float32Array;
         const time = clock.getElapsedTime();
 
-        // Cycle timing (49 second loop):
-        // 0-3s: Cloud (hold, 3s, rotating towards viewer)
-        // 3-6s: Cloud → Sphere (transition, 3s)
-        // 6-13s: Sphere (hold, rotating, 7s)
-        // 13-17s: Sphere → Cube (transition, 4s)
-        // 17-24s: Cube (hold, rotating, 7s)
-        // 24-28s: Cube → Sphere (transition, 4s, first oscillation)
-        // 28-35s: Sphere (hold, rotating, 7s)
-        // 35-39s: Sphere → Cube (transition, 4s, second oscillation)
-        // 39-46s: Cube (hold, rotating, 7s)
-        // 46-49s: Cube → Cloud (transition, 3s - expands forward toward viewer)
-        // Then restart (seamless loop back to initial cloud)
+        // Cycle timing (51 second loop):
+        // 0-4s: Cloud (hold, 4s, rotating towards viewer)
+        // 4-7s: Cloud → Sphere (transition, 3s)
+        // 7-14s: Sphere (hold, rotating, 7s)
+        // 14-18s: Sphere → Cube (transition, 4s)
+        // 18-25s: Cube (hold, rotating, 7s)
+        // 25-29s: Cube → Sphere (transition, 4s, first oscillation)
+        // 29-36s: Sphere (hold, rotating, 7s)
+        // 36-40s: Sphere → Cube (transition, 4s, second oscillation)
+        // 40-47s: Cube (hold, rotating, 7s)
+        // 47-51s: Cube → Cloud (transition, 4s)
+        // Then restart
 
-        const cycle = time % 49;
+        const cycle = time % 51;
         let phase1Weight = 0, phase2Weight = 0, phase3Weight = 0; // cloud, sphere, cube
 
-        if (cycle < 3) {
-            // Cloud hold (3s)
+        if (cycle < 4) {
+            // Cloud hold (4s)
             phase1Weight = 1;
             phase2Weight = 0;
             phase3Weight = 0;
-        } else if (cycle < 6) {
+        } else if (cycle < 7) {
             // Cloud → Sphere transition (3s)
-            const t = (cycle - 3) / 3;
+            const t = (cycle - 4) / 3;
             const eased = t * t * (3 - 2 * t); // Smoothstep
             phase1Weight = 1 - eased;
             phase2Weight = eased;
             phase3Weight = 0;
-        } else if (cycle < 13) {
+        } else if (cycle < 14) {
             // Sphere hold (7s)
             phase1Weight = 0;
             phase2Weight = 1;
             phase3Weight = 0;
-        } else if (cycle < 17) {
+        } else if (cycle < 18) {
             // Sphere → Cube transition (4s)
-            const t = (cycle - 13) / 4;
+            const t = (cycle - 14) / 4;
             const eased = t * t * (3 - 2 * t);
             phase1Weight = 0;
             phase2Weight = 1 - eased;
             phase3Weight = eased;
-        } else if (cycle < 24) {
+        } else if (cycle < 25) {
             // Cube hold (7s)
             phase1Weight = 0;
             phase2Weight = 0;
             phase3Weight = 1;
-        } else if (cycle < 28) {
+        } else if (cycle < 29) {
             // Cube → Sphere transition (4s, first oscillation)
-            const t = (cycle - 24) / 4;
+            const t = (cycle - 25) / 4;
             const eased = t * t * (3 - 2 * t);
             phase1Weight = 0;
             phase2Weight = eased;
             phase3Weight = 1 - eased;
-        } else if (cycle < 35) {
+        } else if (cycle < 36) {
             // Sphere hold (7s)
             phase1Weight = 0;
             phase2Weight = 1;
             phase3Weight = 0;
-        } else if (cycle < 39) {
+        } else if (cycle < 40) {
             // Sphere → Cube transition (4s, second oscillation)
-            const t = (cycle - 35) / 4;
+            const t = (cycle - 36) / 4;
             const eased = t * t * (3 - 2 * t);
             phase1Weight = 0;
             phase2Weight = 1 - eased;
             phase3Weight = eased;
-        } else if (cycle < 46) {
+        } else if (cycle < 47) {
             // Cube hold (7s)
             phase1Weight = 0;
             phase2Weight = 0;
             phase3Weight = 1;
         } else {
-            // Cube → Cloud transition (3s - expands forward toward viewer)
-            const t = (cycle - 46) / 3;
+            // Cube → Cloud transition (4s)
+            const t = (cycle - 47) / 4;
             const eased = t * t * (3 - 2 * t);
             phase1Weight = eased;
             phase2Weight = 0;
@@ -325,24 +279,12 @@ const BiologicalParticles = () => {
             const iy = ix + 1;
             const iz = ix + 2;
 
-            // Cloud target (from cloudPos with immersive flow effect)
-            // Initial cloud phase (0-3s): Swirling vortex pulling toward viewer
-            // Final transition (46-49s): Explosive expansion from cube, rushing toward viewer
-            const isInFinalTransition = cycle >= 46 && cycle < 49;
-            const finalTransitionProgress = isInFinalTransition ? (cycle - 46) / 3 : 0;
-
-            // Enhanced flow for immersion
-            const baseFlowInfluence = phase1Weight * 1.5; // Stronger initial flow
-            const explosiveFlow = finalTransitionProgress * 1.2; // Dramatic final expansion
-            const flowInfluence = baseFlowInfluence + explosiveFlow;
-
-            // Depth effect - particles further back rush forward faster
-            const depthFactor = (cloudPos[iz] + 20) / 40; // Normalize to 0-1
-            const depthBoost = depthFactor * flowInfluence;
-
-            const cloudX = cloudPos[ix] + (flowPos[ix] - cloudPos[ix]) * flowInfluence * 0.4;
-            const cloudY = cloudPos[iy] + (flowPos[iy] - cloudPos[iy]) * flowInfluence * 0.4;
-            const cloudZ = cloudPos[iz] + (flowPos[iz] - cloudPos[iz]) * flowInfluence * 0.4 + (time * 0.8 * flowInfluence) + depthBoost;
+            // Cloud target (from cloudPos with flow effect)
+            // Add forward flow during cloud phase (25% boost to flow effect)
+            const flowInfluence = phase1Weight * 1.25;
+            const cloudX = cloudPos[ix] + (flowPos[ix] - cloudPos[ix]) * flowInfluence * 0.3;
+            const cloudY = cloudPos[iy] + (flowPos[iy] - cloudPos[iy]) * flowInfluence * 0.3;
+            const cloudZ = cloudPos[iz] + (flowPos[iz] - cloudPos[iz]) * flowInfluence * 0.3 + (time * 0.5 * flowInfluence);
 
             // Sphere target (from voidSpherePos)
             const sphereX = voidSpherePos[ix];
@@ -370,42 +312,18 @@ const BiologicalParticles = () => {
             targetX += Math.cos(particleAngle) * rotationRadius;
             targetZ += Math.sin(particleAngle) * rotationRadius;
 
-            // Cloud-specific: Enhanced immersive spiral vortex
-            if (phase1Weight > 0 || finalTransitionProgress > 0) {
-                const cloudStrength = Math.max(phase1Weight, finalTransitionProgress);
+            // Cloud-specific: Gentle spiral rotation towards viewer
+            if (phase1Weight > 0) {
                 const distance = Math.sqrt(targetX * targetX + targetY * targetY);
+                const spiralAngle = Math.atan2(targetY, targetX) + (time * 0.15 * phase1Weight);
+                const spiralRadius = distance * (1 - phase1Weight * 0.05); // Very slight inward pull
 
-                // Faster, more dramatic spiral during cloud phases
-                const spiralSpeed = finalTransitionProgress > 0 ? 0.25 : 0.2;
-                const spiralAngle = Math.atan2(targetY, targetX) + (time * spiralSpeed * cloudStrength);
-
-                // Pulsing vortex effect
-                const pulse = Math.sin(time * 2.0 + i * 0.05) * 0.3;
-                const spiralRadius = distance * (1 - cloudStrength * 0.08 + pulse * cloudStrength);
-
-                const spiralInfluence = cloudStrength * 0.25;
-                targetX = targetX * (1 - spiralInfluence) + Math.cos(spiralAngle) * spiralRadius * spiralInfluence;
-                targetY = targetY * (1 - spiralInfluence) + Math.sin(spiralAngle) * spiralRadius * spiralInfluence;
+                targetX = targetX * (1 - phase1Weight * 0.15) + Math.cos(spiralAngle) * spiralRadius * phase1Weight * 0.15;
+                targetY = targetY * (1 - phase1Weight * 0.15) + Math.sin(spiralAngle) * spiralRadius * phase1Weight * 0.15;
             }
 
-            // Scroll interaction: Particles melt/fall down into text area
-            const scroll = scrollState.current;
-            if (scroll.isScrolling) {
-                const fallForce = scroll.scrollVelocity * 0.5;
-                const distanceFromCenter = Math.sqrt(targetX * targetX + targetY * targetY);
-
-                // Particles closer to center fall more (melting into text)
-                const centerPull = Math.max(0, 1 - distanceFromCenter / 10);
-                const fallAmount = fallForce * (0.5 + centerPull * 1.5);
-
-                // Apply downward force and slight inward pull
-                targetY -= fallAmount;
-                targetX *= (1 - centerPull * 0.02);
-                targetZ += fallForce * 0.3; // Slight forward movement
-            }
-
-            // Smooth movement toward target (faster during cloud for immersive entrance)
-            const moveSpeed = (phase1Weight > 0 || finalTransitionProgress > 0) ? 0.08 : 0.02;
+            // Smooth movement toward target (faster during cloud for smoother entrance)
+            const moveSpeed = phase1Weight > 0 ? 0.05 : 0.02;
             positions[ix] += (targetX - positions[ix]) * moveSpeed;
             positions[iy] += (targetY - positions[iy]) * moveSpeed;
             positions[iz] += (targetZ - positions[iz]) * moveSpeed;
@@ -429,16 +347,10 @@ const BiologicalParticles = () => {
                     array={colors}
                     itemSize={3}
                 />
-                {/* Size attenuation is handled by material, but we can pass sizes as attribute if using custom shader. 
-                     For standard PointsMaterial, we can't easily vary size per particle without a shader.
-                     So we'll stick to uniform size for now OR switch to ShaderMaterial.
-                     BUT the user requested "make some brighter and glow". Brighter is done via colors.
-                     Let's use a standard material first for stability, but enable vertexColors.
-                 */}
             </bufferGeometry>
             <pointsMaterial
                 attach="material"
-                size={0.04} // Slightly larger base size
+                size={0.04}
                 vertexColors
                 sizeAttenuation
                 transparent
@@ -450,7 +362,7 @@ const BiologicalParticles = () => {
     );
 };
 
-export default function AnimationV6_EventHorizon() {
+export default function AnimationV10_SmoothCycle() {
     return (
         <div style={{ width: '100%', height: '100vh', background: 'radial-gradient(circle at center, #020a10 0%, #000000 100%)' }}>
             <Canvas camera={{ position: [0, 0, 18], fov: 55 }} dpr={[1, 2]}>
