@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect, lazy, Suspense } from 'react';
 import { Hero } from './components/Hero';
 
 // PHILOSOPHY VERSIONS - Uncomment to switch
@@ -12,15 +12,18 @@ import { CodeShowcase } from './components/CodeShowcase';
 import { ProofOfWork } from './components/ProofOfWork';
 import { VisionTimeline } from './components/VisionTimeline';
 
-// ANIMATION VERSIONS - Uncomment to switch
-// import AnimationV1_Fluid from './components/animations/v1/AnimationV1_Fluid'; // V1: Original Fluid Waves
-// import AnimationV2_Morphing from './components/animations/v1/AnimationV2_Morphing'; // V2: Cloud/Sphere/Cube Morph
-// import AnimationV3_SandCube from './components/animations/v1/AnimationV3_SandCube'; // V3: Interactive Sand Cube
-// import AnimationV4_Smooth from './components/animations/v1/AnimationV4_Smooth'; // V4: Optimized Spring Physics
-import AnimationV5_Enhanced from './components/animations/v1/AnimationV5_Enhanced'; // V5: Enhanced with scroll/click/sphere (Previous)
-// import AnimationV6_EventHorizon from './components/animations/v1/AnimationV6_EventHorizon'; // V6: 20k Particles, Scroll Interaction, Flow (Restored)
-// import AnimationV7_Convergence from './components/animations/v1/AnimationV7_Convergence'; // V7: 5 Clusters Converging (Archived)
-// import AnimationV8_NaturalGenius from './components/animations/v1/AnimationV8_NaturalGenius'; // V8: Cloud -> Sphere -> Cube Loop (Archived)
+// ANIMATION - Lazy loaded for performance (~600KB Three.js deferred)
+const AnimationV5_Enhanced = lazy(() => import('./components/animations/v1/AnimationV5_Enhanced'));
+
+// ANIMATION VERSIONS (archived) - Uncomment and update lazy import to switch
+// AnimationV1_Fluid - Original Fluid Waves
+// AnimationV2_Morphing - Cloud/Sphere/Cube Morph
+// AnimationV3_SandCube - Interactive Sand Cube
+// AnimationV4_Smooth - Optimized Spring Physics
+// AnimationV5_Enhanced - Enhanced with scroll/click/sphere (Current)
+// AnimationV6_EventHorizon - 20k Particles, Scroll Interaction, Flow
+// AnimationV7_Convergence - 5 Clusters Converging
+// AnimationV8_NaturalGenius - Cloud -> Sphere -> Cube Loop
 
 
 
@@ -28,25 +31,36 @@ import AnimationV5_Enhanced from './components/animations/v1/AnimationV5_Enhance
 
 function App() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [animationOpacity, setAnimationOpacity] = useState(0.5);
+
+  // Fade animation opacity from 50% to 35% as user scrolls
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const maxScroll = 800; // Fade complete by 800px scroll
+      const minOpacity = 0.35;
+      const maxOpacity = 0.5;
+
+      const progress = Math.min(scrollY / maxScroll, 1);
+      const newOpacity = maxOpacity - (progress * (maxOpacity - minOpacity));
+      setAnimationOpacity(newOpacity);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden" ref={scrollContainerRef}>
 
-      {/* Background Animation Layer */}
-      <div className="fixed inset-0 z-0 opacity-35 mix-blend-lighten pointer-events-auto">
-        {/* <AnimationV1_Fluid /> */}
-        {/* <AnimationV2_Morphing /> */}
-        {/* <AnimationV3_SandCube /> */}
-        {/* <AnimationV4_Smooth /> */}
-        <AnimationV5_Enhanced />
-        {/* <AnimationV6_EventHorizon /> */}
-        {/* <AnimationV7_Convergence /> */}
-        {/* <AnimationV8_NaturalGenius /> */}
-        {/* Additional animation variants available in animations/v1/ */}
-
-
-
-
+      {/* Background Animation Layer - Lazy loaded, scroll-fading opacity */}
+      <div
+        className="fixed inset-0 z-0 mix-blend-lighten pointer-events-auto"
+        style={{ opacity: animationOpacity }}
+      >
+        <Suspense fallback={<div className="w-full h-full bg-black" />}>
+          <AnimationV5_Enhanced />
+        </Suspense>
       </div>
 
       {/* Content Layer */}

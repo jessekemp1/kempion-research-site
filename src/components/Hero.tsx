@@ -56,7 +56,7 @@ export const Hero = () => {
                                     ease: "easeInOut",
                                     delay: i * 0.2 // Staggered effect
                                 }}
-                                className="text-5xl md:text-8xl font-display font-bold text-white select-none relative z-10 mix-blend-overlay"
+                                className="text-5xl md:text-8xl font-display font-bold text-white select-none relative z-10 mix-blend-screen"
                             >
                                 {letter}
                             </motion.span>
